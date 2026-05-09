@@ -1,0 +1,41 @@
+services:
+  # ── Web API ─────────────────────────────────────────────
+  - type: web
+    name: ultraagent-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+
+  # ── Telegram Bot (Worker يشتغل 24/7) ────────────────────
+  - type: worker
+    name: ultraagent-bot
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m interfaces.telegram_bot
+
+  # ── Dreaming Mode (كل يوم 02:00 UTC) ────────────────────
+  - type: cron
+    name: dreaming-mode
+    env: python
+    schedule: "0 2 * * *"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m scheduler.cron_tasks dreaming
+
+  # ── Self-Improvement (كل أحد 03:00 UTC) ─────────────────
+  - type: cron
+    name: self-improvement
+    env: python
+    schedule: "0 3 * * 0"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m scheduler.cron_tasks self_improve
+
+  # ── Predict-Preload (كل 6 ساعات) ────────────────────────
+  - type: cron
+    name: predict-preload
+    env: python
+    schedule: "0 */6 * * *"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m scheduler.cron_tasks predict
