@@ -13,7 +13,6 @@ pydantic==2.9.2
 # Database & Memory
 supabase==2.9.0
 redis==5.2.0
-pgvector==0.3.5
 
 # Interfaces
 python-telegram-bot==21.6
